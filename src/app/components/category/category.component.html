@@ -1,0 +1,16 @@
+<h2>Manage Categories</h2>
+
+<form (ngSubmit)="addCategory()" style="margin-bottom: 20px;">
+  <input [(ngModel)]="newCategory.name" name="name" placeholder="Category Name" required />
+  <input [(ngModel)]="newCategory.itemNumber" name="itemNumber" type="number" placeholder="Item Number" required />
+  <button type="submit">Add Category</button>
+</form>
+
+<ul>
+  <li *ngFor="let category of categories">
+    <input [(ngModel)]="category.name" name="name-{{ category.id }}" />
+    <input [(ngModel)]="category.itemNumber" name="itemNumber-{{ category.id }}" type="number" />
+    <button (click)="updateCategory(category)">Update</button>
+    <button (click)="deleteCategory(category.id)">Delete</button>
+  </li>
+</ul>

@@ -1,1 +1,104 @@
-/* You can add global styles to this file, and also import other style files */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #ffffff;
+  color: #1e293b;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+header {
+  background-color: #f9fbfb;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1f2937;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Navigation */
+nav {
+  background-color: #f3f4f6;
+  padding: 1rem 2rem;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+nav a {
+  color: #374151;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+nav a:hover {
+  background-color: #e5e7eb;
+}
+
+/* Main content area */
+main {
+  flex-grow: 1;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Card-style product box */
+.content-box {
+  background-color: #fef3c7; /* Light yellow for attention */
+  color: #1e293b;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  max-width: 600px;
+  width: 100%;
+  transition: transform 0.2s ease;
+}
+
+.content-box:hover {
+  transform: translateY(-5px);
+}
+
+/* Footer fixed at bottom */
+footer {
+  background-color: #f3f4f6;
+  padding: 1rem 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6b7280;
+  border-top: 1px solid #e5e7eb;
+  margin-top: auto;
+}
+
+/* Footer Icons */
+footer .social-icons {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+footer .social-icons a {
+  color: #6b7280;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+footer .social-icons a:hover {
+  color: #111827;
+}

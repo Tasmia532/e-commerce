@@ -1,0 +1,20 @@
+<h2>Your Cart</h2>
+
+<div *ngIf="items.length === 0">
+  <p>Your cart is empty.</p>
+</div>
+
+<div *ngFor="let item of items" class="cart-item">
+  <h4>{{ item.name }}</h4>
+  <p>Price: Rs. {{ item.price }}</p>
+  <p>Quantity: {{ item.quantity }}</p>
+  <p>Subtotal: Rs. {{ item.price * item.quantity }}</p>
+
+  <button (click)="increaseQuantity(item)">+</button>
+  <button (click)="decreaseQuantity(item)">-</button>
+  <button (click)="removeItem(item)">Remove</button>
+</div>
+
+<hr>
+<h3>Total: Rs. {{ getTotal() }}</h3>
+<button (click)="clearCart()">Clear Cart</button>

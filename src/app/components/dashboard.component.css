@@ -1,0 +1,85 @@
+/* Container and Layout */
+.dashboard-container {
+  padding: 2rem;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard-content {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.dashboard-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  width: 400px;
+}
+/* Optional Enhancements */
+.product-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.order-item {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+
+/* Order Styling */
+.order {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 6px;
+  background: #fefefe;
+}
+
+/* Badge Styles */
+.badge-new {
+  color: #fff;
+  background-color: #f0ad4e;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.badge-processing {
+  color: #fff;
+  background-color: #5bc0de;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.badge-completed {
+  color: #fff;
+  background-color: #5cb85c;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Change Status Control */
+.status-control {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.status-control label {
+  font-weight: bold;
+}

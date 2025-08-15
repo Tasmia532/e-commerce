@@ -1,8 +1,11 @@
 export interface Product {
-  id?: string;  // <-- add this
-  name: string;
-  description: string;
-  price: number;
-  imageUrl: string;
+rating: number;
   quantity: number;
+  id?: string;          // Firestore doc ID
+  name: string;
+  categoryId: string;   // link to Category
+  price: number;
+  description?: string;
+  imageUrl?: string;
+  createdAt?: any;
 }

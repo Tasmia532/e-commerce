@@ -24,7 +24,10 @@ export class CheckoutComponent {
     private auth: AuthService,
     private cartService: CartService,
     private router: Router
-  ) {
+  ) 
+  
+  
+  {
     this.checkoutForm = this.fb.group({
       fullName: ['', Validators.required],
       address: ['', Validators.required],
@@ -35,31 +38,35 @@ export class CheckoutComponent {
     this.cartItems = this.cartService.getItems();
     this.total = this.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   }
-
-  placeOrder() {
-    if (this.checkoutForm.invalid || this.cartItems.length === 0) {
-      alert('Fill all fields and add items to cart.');
-      return;
-    }
-
-    const order = {
-      userId: this.auth.currentUser?.uid,
-      items: this.cartItems,
-      total: this.total,
-      billingDetails: this.checkoutForm.value,
-      status: 'new',
-      createdAt: serverTimestamp(),
-    };
-
-    const ordersRef = collection(this.firestore, 'orders');
-    addDoc(ordersRef, order)
-      .then(() => {
-        alert('✅ Order placed!');
-        this.cartService.clearCart();
-        this.router.navigate(['/my-orders']);
-      })
-      .catch((error) => {
-        console.error('❌ Error placing order:', error);
-      });
+placeOrder() {
+  if (this.checkoutForm.invalid || this.cartItems.length === 0) {
+    alert('Fill all fields and add items to cart.');
+    return;
   }
+
+  const fullNameFromForm = this.checkoutForm.value.fullName?.trim();
+
+  const order = {
+    userId: this.auth.currentUser?.uid,
+    userName: fullNameFromForm || this.auth.currentUser?.displayName || this.auth.currentUser?.email || 'N/A',
+    items: this.cartItems,
+    products: this.cartItems,          // for admin template
+    totalPrice: this.total,            // for admin template
+    address: this.checkoutForm.value.address,
+    payment: this.checkoutForm.value.paymentMethod,
+    status: 'new',
+    createdAt: serverTimestamp(),
+  };
+
+  const ordersRef = collection(this.firestore, 'orders');
+  addDoc(ordersRef, order)
+    .then(() => {
+      alert('✅ Order placed!');
+      this.cartService.clearCart();
+      this.router.navigate(['/my-orders']);
+    })
+    .catch((error) => {
+      console.error('❌ Error placing order:', error);
+    });
+}
 }

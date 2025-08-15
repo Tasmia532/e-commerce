@@ -5,34 +5,51 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut,
-  UserCredential,
+  User,
   onAuthStateChanged,
-  EmailAuthProvider,
   linkWithCredential,
-  linkWithPopup
+  EmailAuthProvider
 } from '@angular/fire/auth';
 import { Router } from '@angular/router';
+import {
+  Firestore,
+  doc,
+  serverTimestamp,
+  setDoc,
+  getDoc
+} from '@angular/fire/firestore';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  // Observables for authentication state
   private isAuthenticated = new BehaviorSubject<boolean>(false);
   isAuthenticated$ = this.isAuthenticated.asObservable();
 
   private isAdminSubject = new BehaviorSubject<boolean>(false);
   isAdmin$ = this.isAdminSubject.asObservable();
 
-  constructor(private auth: Auth, private router: Router) {
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  currentUser$ = this.currentUserSubject.asObservable();
+  user$: any;
+
+  constructor(
+    private auth: Auth,
+    private router: Router,
+    private firestore: Firestore
+  ) {
+    // This keeps user logged in after refresh
     onAuthStateChanged(this.auth, async (user) => {
       this.isAuthenticated.next(!!user);
+      this.currentUserSubject.next(user);
 
       if (user) {
         try {
-          const idTokenResult = await user.getIdTokenResult();
-          const isAdmin = idTokenResult.claims?.['admin'] === true;
+          const userDoc = await getDoc(doc(this.firestore, `users/${user.uid}`));
+          const isAdmin = userDoc.exists() && userDoc.data()?.['isAdmin'] === true;
           this.isAdminSubject.next(isAdmin);
         } catch (error) {
-          console.error('Error checking admin claims:', error);
+          console.error('Error checking admin/user status:', error);
           this.isAdminSubject.next(false);
         }
       } else {
@@ -41,66 +58,87 @@ export class AuthService {
     });
   }
 
-  loginWithEmail(email: string, password: string): Promise<UserCredential> {
-    return signInWithEmailAndPassword(this.auth, email, password);
-  }
-
-  async loginWithGoogle(): Promise<UserCredential> {
-    const provider = new GoogleAuthProvider();
-    return await signInWithPopup(this.auth, provider);
-  }
-
-  async linkGoogleAccount(): Promise<void> {
-    const user = this.auth.currentUser;
-    const provider = new GoogleAuthProvider();
-
-    if (!user) return;
-
+  // Email & password login
+  async loginWithEmail(email: string, password: string) {
     try {
-      await linkWithPopup(user, provider);
-      console.log('✅ Google account linked successfully');
+      const cred = await signInWithEmailAndPassword(this.auth, email, password);
+
+      const userDoc = await getDoc(doc(this.firestore, `users/${cred.user?.uid}`));
+      const isAdmin = userDoc.exists() && userDoc.data()?.['isAdmin'] === true;
+
+      this.isAdminSubject.next(isAdmin);
+
+      // Navigate to correct dashboard
+      if (isAdmin) this.router.navigate(['/admin/dashboard']);
+      else this.router.navigate(['/user/dashboard']);
     } catch (error: any) {
-      if (error.code === 'auth/credential-already-in-use') {
-        console.warn('⚠️ Google account is already linked to another user.');
-      } else if (error.code === 'auth/requires-recent-login') {
-        console.warn('🔒 Please log in again to link Google.');
-      } else {
-        console.error('❌ Google linking failed:', error);
-      }
+      console.error('Login failed:', error.code, error.message);
+      alert(`Error: ${error.code}`);
+      throw error;
     }
   }
 
-  async linkEmailPassword(email: string, password: string): Promise<void> {
-    const user = this.auth.currentUser;
-    const credential = EmailAuthProvider.credential(email, password);
-
-    if (!user) return;
-
+  // Google login
+  async loginWithGoogle() {
     try {
-      await linkWithCredential(user, credential);
-      console.log('✅ Email/password linked to Google account');
-    } catch (error: any) {
-      if (error.code === 'auth/credential-already-in-use') {
-        console.warn('⚠️ This email is already used by another account.');
-      } else if (error.code === 'auth/email-already-in-use') {
-        console.warn('⚠️ Email already in use with another account.');
-      } else {
-        console.error('❌ Linking failed:', error);
-      }
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(this.auth, provider);
+      const user = result.user;
+
+      // Store or update user in Firestore
+      const userRef = doc(this.firestore, `users/${user.uid}`);
+      await setDoc(
+        userRef,
+        {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          isAdmin: user.email === 'admin@gmail.com', // Set your admin email here
+          createdAt: serverTimestamp()
+        },
+        { merge: true }
+      );
+
+      const userDoc = await getDoc(userRef);
+      const isAdmin = userDoc.exists() && userDoc.data()?.['isAdmin'] === true;
+      this.isAdminSubject.next(isAdmin);
+
+      // Navigate to correct dashboard
+      if (isAdmin) this.router.navigate(['/admin/dashboard']);
+      else this.router.navigate(['/user/dashboard']);
+    } catch (error) {
+      console.error('Google login failed:', error);
+      throw error;
     }
   }
 
-  logout(): Promise<void> {
-    return signOut(this.auth).then(() => {
-      this.router.navigate(['/login']);
-    });
-  }
-
+  // Get current user object
   get currentUser() {
     return this.auth.currentUser;
   }
 
+  // Simple check for logged-in state
   isLoggedIn(): boolean {
     return !!this.auth.currentUser;
+  }
+
+  // Logout
+  async logout(): Promise<void> {
+    try {
+      await signOut(this.auth);
+      this.isAdminSubject.next(false);
+      this.router.navigate(['/login']); // back to login
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  }
+
+  // Link email/password to existing Google account
+  async linkEmailPassword(email: string, password: string) {
+    if (!this.auth.currentUser) {
+      throw new Error('No user is currently logged in.');
+    }
+    const credential = EmailAuthProvider.credential(email, password);
+    return await linkWithCredential(this.auth.currentUser, credential);
   }
 }

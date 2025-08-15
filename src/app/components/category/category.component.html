@@ -1,16 +1,26 @@
 <h2>Manage Categories</h2>
 
 <form (ngSubmit)="addCategory()" style="margin-bottom: 20px;">
-  <input [(ngModel)]="newCategory.name" name="name" placeholder="Category Name" required />
-  <input [(ngModel)]="newCategory.itemNumber" name="itemNumber" type="number" placeholder="Item Number" required />
-  <button type="submit">Add Category</button>
+  <input
+    [(ngModel)]="newCategory.name"
+    name="name"
+    placeholder="Category Name"
+    required
+    class="form-control mb-2"
+  />
+  <button type="submit" class="btn btn-primary">Add Category</button>
 </form>
 
-<ul>
-  <li *ngFor="let category of categories">
-    <input [(ngModel)]="category.name" name="name-{{ category.id }}" />
-    <input [(ngModel)]="category.itemNumber" name="itemNumber-{{ category.id }}" type="number" />
-    <button (click)="updateCategory(category)">Update</button>
-    <button (click)="deleteCategory(category.id)">Delete</button>
+<ul class="list-group">
+  <li *ngFor="let category of categories" class="list-group-item d-flex align-items-center justify-content-between">
+    <input
+      [(ngModel)]="category.name"
+      name="name-{{ category.id }}"
+      class="form-control me-2"
+    />
+    <div>
+      <button (click)="updateCategory(category)" class="btn btn-success btn-sm me-1">Update</button>
+<button (click)="deleteCategory(category.id!)" class="btn btn-danger btn-sm">Delete</button>
+    </div>
   </li>
 </ul>

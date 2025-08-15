@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 })
 export class CategoryComponent implements OnInit {
   categories: Category[] = [];
-  newCategory: Category = { id: '', name: '', itemNumber: 0 };
+  newCategory: Category = { id: '', name: '', slug: '', createdAt: undefined };
 
   constructor(private categoryService: CategoryService) {}
 
@@ -26,13 +26,16 @@ export class CategoryComponent implements OnInit {
 
   addCategory() {
     this.newCategory.id = uuidv4();
+    this.newCategory.slug = this.newCategory.name.toLowerCase().replace(/\s+/g, '-');
     this.categoryService.addCategory(this.newCategory).then(() => {
-      this.newCategory = { id: '', name: '', itemNumber: 0 };
+      // Reset the form
+      this.newCategory = { id: '', name: '', slug: '', createdAt: undefined };
     });
   }
 
   updateCategory(category: Category) {
-    this.categoryService.updateCategory(category);
+    if (!category.id) return;
+    this.categoryService.updateCategory(category.id, category.name);
   }
 
   deleteCategory(id: string) {

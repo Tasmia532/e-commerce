@@ -1,38 +1,41 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Firestore, collection, collectionData, doc, addDoc, updateDoc, deleteDoc, serverTimestamp } from '@angular/fire/firestore';
+import { Observable, map } from 'rxjs';
 import { Category } from '../models/category';
-import { map } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class CategoryService {
-  constructor(private firestore: AngularFirestore) {}
+  private categoriesCollection;
 
-  getCategories() {
-    return this.firestore
-      .collection<Category>('categories')
-      .snapshotChanges()
-      .pipe(
-        map(actions =>
-          actions.map(a => {
-            const data = a.payload.doc.data() as Category;
-            const id = a.payload.doc.id;
-          return { ...data, id }; // ✅ Safe: 'id' from Firestore overrides any inside data
-          })
-        )
-      );
+  constructor(private firestore: Firestore) {
+    this.categoriesCollection = collection(this.firestore, 'categories');
   }
 
-  addCategory(category: Category) {
-    return this.firestore.collection('categories').doc(category.id).set(category);
+  // Get categories with id
+  getCategories(): Observable<Category[]> {
+    return collectionData(this.categoriesCollection, { idField: 'id' }) as Observable<Category[]>;
   }
 
-  updateCategory(category: Category) {
-    return this.firestore.collection('categories').doc(category.id).update(category);
+  // Add new category
+  addCategory(category: Category): Promise<void> {
+    const newCat = {
+      ...category,
+      slug: category.name.toLowerCase().replace(/\s+/g, '-'),
+      createdAt: serverTimestamp()
+    };
+    return addDoc(this.categoriesCollection, newCat).then(() => {});
   }
 
-  deleteCategory(id: string) {
-    return this.firestore.collection('categories').doc(id).delete();
+  // Update category name
+  updateCategory(id: string, name: string): Promise<void> {
+    const categoryDocRef = doc(this.firestore, `categories/${id}`);
+    const updatedSlug = name.toLowerCase().replace(/\s+/g, '-');
+    return updateDoc(categoryDocRef, { name, slug: updatedSlug });
+  }
+
+  // Delete category
+  deleteCategory(id: string): Promise<void> {
+    const categoryDocRef = doc(this.firestore, `categories/${id}`);
+    return deleteDoc(categoryDocRef);
   }
 }

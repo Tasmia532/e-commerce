@@ -1,0 +1,19 @@
+
+
+<div class="container my-4">
+
+  <app-navbar></app-navbar>
+
+<div class="container my-4">
+
+  <!-- Navigation Tabs -->
+  <nav class="d-flex gap-4 mb-4 border-bottom pb-2">
+    <a routerLink="products" routerLinkActive="fw-bold text-primary" class="text-decoration-none">Products</a>
+    <a routerLink="cart" routerLinkActive="fw-bold text-primary" class="text-decoration-none">Cart ({{ cartCount }})</a>
+    <a routerLink="orders" routerLinkActive="fw-bold text-primary" class="text-decoration-none">My Orders</a>
+  </nav>
+
+
+  <!-- Route content render hoga yahan -->
+  <router-outlet></router-outlet>
+</div>

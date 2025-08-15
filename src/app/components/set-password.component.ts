@@ -85,7 +85,7 @@ export class SetPasswordComponent {
         this.message = '✅ Password linked successfully!';
         this.password = '';
       })
-      .catch((error) => {
+      .catch((error: { code: string; message: any; }): void => {
         if (error.code === 'auth/credential-already-in-use') {
           this.message = '⚠️ This email is already linked to another account.';
         } else if (error.code === 'auth/requires-recent-login') {

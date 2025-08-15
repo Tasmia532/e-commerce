@@ -1,0 +1,41 @@
+/* user-dashboard.component.css */
+.sidebar-box {
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  border: 1px solid #eee;
+}
+
+.sidebar-box h6 {
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #ff5e00; /* Daraz orange */
+}
+
+.form-check-label {
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.form-check-input:checked {
+  background-color: #ff5e00;
+  border-color: #ff5e00;
+}
+/* user-dashboard.component.css */
+.bg-white {
+  background-color: white !important;
+}
+
+label {
+  font-size: 14px;
+}
+
+select.form-select-sm {
+  font-size: 14px;
+}
+
+.card-img-top {
+  height: 180px;
+  object-fit: cover;
+}

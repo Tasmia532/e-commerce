@@ -1,7 +1,7 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component'; // ✅ AppComponent ko import karna hai
 import { provideRouter } from '@angular/router';
-import { appRoutes } from './app/app.routes';
+import { routes } from './app/app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
@@ -10,7 +10,7 @@ import { environment } from './environments/environment';
 
 bootstrapApplication(AppComponent, {
   providers: [
-    provideRouter(appRoutes),
+    provideRouter(routes),
     provideHttpClient(),
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),

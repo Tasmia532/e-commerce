@@ -1,5 +1,6 @@
 export interface Category {
-  id: string;
+  id?: string;        // Firestore doc id (optional)
   name: string;
-  itemNumber: number;
+  slug: string;
+  createdAt?: any;    // Firestore Timestamp or Date (optional)
 }

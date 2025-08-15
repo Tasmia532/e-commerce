@@ -1,27 +1,32 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, collectionData, addDoc, deleteDoc, doc } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, doc, addDoc, updateDoc, deleteDoc, serverTimestamp } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Product } from '../models/product';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ProductService {
+  private productsCollection;
 
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore) {
+    this.productsCollection = collection(this.firestore, 'products');
+  }
 
   getProducts(): Observable<Product[]> {
-    const productsRef = collection(this.firestore, 'products');
-    return collectionData(productsRef, { idField: 'id' }) as Observable<Product[]>;
+    return collectionData(this.productsCollection, { idField: 'id' }) as Observable<Product[]>;
   }
 
   addProduct(product: Product) {
-    const productsRef = collection(this.firestore, 'products');
-    return addDoc(productsRef, product);
+    const productWithTimestamp = { ...product, createdAt: serverTimestamp() };
+    return addDoc(this.productsCollection, productWithTimestamp);
+  }
+
+  updateProduct(id: string, product: Partial<Product>) {
+    const productDocRef = doc(this.firestore, `products/${id}`);
+    return updateDoc(productDocRef, product);
   }
 
   deleteProduct(id: string) {
-    const productDoc = doc(this.firestore, 'products', id);
-    return deleteDoc(productDoc);
+    const productDocRef = doc(this.firestore, `products/${id}`);
+    return deleteDoc(productDocRef);
   }
 }

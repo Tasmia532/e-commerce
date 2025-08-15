@@ -1,18 +1,32 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
   private items: any[] = [];
+  private cartCount$ = new BehaviorSubject<number>(0);
+  getCart: any;
 
   constructor() {
     const savedCart = localStorage.getItem('cart');
     this.items = savedCart ? JSON.parse(savedCart) : [];
+    this.updateCartCount();
   }
 
   private saveCart() {
     localStorage.setItem('cart', JSON.stringify(this.items));
+    this.updateCartCount();
+  }
+
+  private updateCartCount() {
+    const count = this.items.reduce((sum, item) => sum + item.quantity, 0);
+    this.cartCount$.next(count);
+  }
+
+  getCartCount() {
+    return this.cartCount$.asObservable();
   }
 
   getItems() {

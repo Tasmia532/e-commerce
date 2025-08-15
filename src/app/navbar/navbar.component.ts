@@ -1,41 +1,45 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
-  styleUrls: ['./navbar.component.css'],
   standalone: true,
   imports: [CommonModule, RouterModule],
+  template: `
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/products">🛒 My Shop</a>
 
-template: `
-  <nav class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-8 py-4 shadow-lg">
-    <div class="flex justify-between items-center">
-    <h1 class="text-3xl font-extrabold">🛍 Shop-Cart</h1>
-      <div class="flex gap-8 text-lg font-medium items-center">
-        <a routerLink="/admin-login" class="flex items-center gap-1 hover:text-yellow-300 transition">
-          🔐 <span>Admin</span>
-        </a>
-        <a routerLink="/dashboard" class="flex items-center gap-1 hover:text-yellow-300 transition">
-          📊 <span>Dashboard</span>
-        </a>
-        <a routerLink="/products" class="flex items-center gap-1 hover:text-yellow-300 transition">
-          🛒 <span>Products</span>
-        </a>
-        <a routerLink="/cart" class="flex items-center gap-1 hover:text-yellow-300 transition">
-          🧺 <span>Cart</span>
-        </a>
-        <a routerLink="/checkout" class="flex items-center gap-1 hover:text-yellow-300 transition">
-          💳 <span>Checkout</span>
-        </a>
-        <a routerLink="/my-orders" class="flex items-center gap-1 hover:text-yellow-300 transition">
-          📦 <span>Orders</span>
-        </a>
-      </div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+            data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+      
+        <li class="nav-item">
+          <button class="btn btn-light" (click)="logout()">Logout</button>
+        </li>
+      </ul>
     </div>
-  </nav>
-`
-
-
+  </div>
+</nav>
+  `,
+  styles: [`
+    .navbar-nav .nav-link.active {
+      font-weight: bold;
+      border-bottom: 2px solid white;
+    }
+  `]
 })
-export class NavbarComponent {}
+export class NavbarComponent {
+
+  constructor(private authService: AuthService) {}
+
+  logout() {
+    this.authService.logout();
+  }
+}

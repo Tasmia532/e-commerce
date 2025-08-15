@@ -1,0 +1,34 @@
+<div class="container mt-5">
+  <h2 class="mb-4">Categories CRUD</h2>
+
+  <!-- Add new category -->
+  <div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="New Category Name" [(ngModel)]="newCategory">
+    <button class="btn btn-primary" (click)="addCategory()">Add</button>
+  </div>
+
+  <!-- Categories table -->
+  <table class="table table-striped table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>Name</th>
+        <th>Slug</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let cat of categories">
+        <td *ngIf="editId !== cat.id">{{ cat.name }}</td>
+        <td *ngIf="editId === cat.id">
+          <input type="text" class="form-control" [(ngModel)]="editName">
+        </td>
+        <td>{{ cat.slug }}</td>
+        <td>
+          <button *ngIf="editId !== cat.id" class="btn btn-sm btn-warning me-2" (click)="startEdit(cat)">Edit</button>
+          <button *ngIf="editId === cat.id" class="btn btn-sm btn-success me-2" (click)="saveEdit()">Save</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteCategory(cat.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

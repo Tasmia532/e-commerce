@@ -1,46 +1,7 @@
-
-nav {
-  background-color: #62c0d1 !important; /* apna desired color */
+/* src/app/navbar/navbar.component.css */
+.navbar-brand {
+  font-size: 1.4rem;
 }
-
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2.5rem;
-  background-color: #62c0d1;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-  font-family: 'Segoe UI', sans-serif;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.navbar-left {
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: #1f2937;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.navbar-links {
-  list-style: none;
-  display: flex;
-  gap: 2.5rem;
-  margin: 0;
-  padding: 0;
-}
-
-.navbar-links li a {
-  text-decoration: none;
-  color: #374151;
+.nav-link {
   font-size: 1rem;
-  font-weight: 500;
-  transition: color 0.3s ease;
-}
-
-.navbar-links li a:hover {
-  color: #4f46e5;
 }

@@ -1,3 +1,22 @@
+/* src/styles.css */
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css"; /* optional icons */
+html, body {
+  font-size: 14px; /* Default bootstrap se thoda chhota */
+  font-family: 'Inter', sans-serif; /* Tailwind-friendly font */
+}
+
+.navbar {
+  font-size: 0.95rem;
+}
+
+h1, h2, h3, h4, h5 {
+  line-height: 1.2;
+}
+
+.container {
+  max-width: 1200px;
+}
 
 * {
   margin: 0;

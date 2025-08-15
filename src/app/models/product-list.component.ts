@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../services/product.service';
@@ -12,10 +12,14 @@ import { Product } from '../models/product';
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent {
+export class ProductListComponent implements OnInit {
+[x: string]: any;
   products: Product[] = [];
+  filteredProducts: Product[] = [];
   originalProducts: Product[] = [];
+  selectedCategory: string = '';
   priceSort: string = '';
+  addingToCart: { [key: string]: boolean } = {};
 
   constructor(
     private productService: ProductService,
@@ -24,23 +28,34 @@ export class ProductListComponent {
 
   ngOnInit() {
     this.productService.getProducts().subscribe(data => {
-  this.products = data as Product[];
-});
- // Preserve original list
-  
+      this.products = data;
+      this.originalProducts = [...data];
+      this.filteredProducts = [...data];
+    });
   }
 
   addToCart(product: Product) {
-    this.cartService.addToCart(product);
+    this.addingToCart[product.id || ''] = true;
+
+    setTimeout(() => {
+      this.cartService.addToCart(product);
+      this.addingToCart[product.id || ''] = false;
+    }, 500); // 0.5s spinner feedback
   }
 
-  sortByPrice() {
+  applyFilters() {
+    this.filteredProducts = [...this.originalProducts];
+
+    if (this.selectedCategory) {
+      this.filteredProducts = this.filteredProducts.filter(
+        p => p.categoryId === this.selectedCategory
+      );
+    }
+
     if (this.priceSort === 'asc') {
-      this.products.sort((a, b) => a.price - b.price);
+      this.filteredProducts.sort((a, b) => a.price - b.price);
     } else if (this.priceSort === 'desc') {
-      this.products.sort((a, b) => b.price - a.price);
-    } else {
-      this.products = [...this.originalProducts]; // Reset
+      this.filteredProducts.sort((a, b) => b.price - a.price);
     }
   }
 }

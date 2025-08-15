@@ -1,43 +1,30 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
-import { Firestore, collectionData, collection, query, where } from '@angular/fire/firestore';
-import { Auth } from '@angular/fire/auth';
-import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { collection as col, QueryConstraint } from 'firebase/firestore';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { OrderService } from '../../services/order.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-my-orders',
   standalone: true,
-  imports: [CommonModule],
-  providers: [DatePipe],
-  templateUrl: './user-order.component.html'
+  imports: [CommonModule, RouterModule],
+  templateUrl: './user-order.component.html',
 })
-export class MyOrdersComponent {
-  private firestore = inject(Firestore);
-  private auth = inject(Auth);
+export class MyOrdersComponent implements OnInit {
+  orders: any[] = [];
 
-  orders$: Observable<any[]> = of([]);
+  constructor(private orderService: OrderService) {}
 
   ngOnInit() {
-    this.orders$ = new Observable(observer => {
-      const unsubscribe = this.auth.onAuthStateChanged(async user => {
-        if (!user) {
-          observer.next([]);
-          return;
-        }
+  this.orderService.getOrders().subscribe(data => {
+    this.orders = data.map(order => ({
+      ...order,
+      friendlyId: this.generateFriendlyId(order.id || '')
+    }));
+  });
+}
 
-        const q = query(
-          collection(this.firestore, 'orders'),
-          where('userId', '==', user.uid)
-        );
-
-        collectionData(q, { idField: 'id' }).subscribe(data => {
-          observer.next(data);
-        });
-      });
-
-      return { unsubscribe };
-    });
+  generateFriendlyId(id: string) {
+    // Shorten and make user-friendly
+    return id.slice(0, 8).toUpperCase();
   }
 }

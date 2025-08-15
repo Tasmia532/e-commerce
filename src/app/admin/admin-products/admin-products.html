@@ -1,0 +1,60 @@
+<div class="container mt-4">
+  <h2 class="mb-3">Manage Products</h2>
+
+  <!-- Product Form -->
+  <form (ngSubmit)="editId ? saveEdit() : addProduct()" class="mb-4 p-3 border rounded bg-light">
+    <div class="row g-3">
+      <div class="col-md-3">
+        <input [(ngModel)]="newProduct.name" name="name" class="form-control" placeholder="Product Name" required />
+      </div>
+      <div class="col-md-3">
+        <select [(ngModel)]="newProduct.categoryId" name="category" class="form-select" required>
+          <option value="">Select Category</option>
+          <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <input [(ngModel)]="newProduct.price" name="price" type="number" class="form-control" placeholder="Price" required />
+      </div>
+      <div class="col-md-2">
+        <input [(ngModel)]="newProduct.imageUrl" name="imageUrl" type="text" class="form-control" placeholder="Image URL" />
+      </div>
+      <div class="col-md-2 d-flex">
+        <button type="submit" class="btn btn-success me-2">{{ editId ? 'Save' : 'Add' }}</button>
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">Clear</button>
+      </div>
+    </div>
+    <div class="mt-2">
+      <textarea [(ngModel)]="newProduct.description" name="description" class="form-control" placeholder="Description"></textarea>
+    </div>
+  </form>
+
+  <!-- Products Table -->
+  <table class="table table-bordered table-striped">
+    <thead class="table-dark">
+      <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price</th>
+        <th>Image</th>
+        <th>Description</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of products">
+        <td>{{ product.name }}</td>
+        <td>{{ getCategoryName(product.categoryId) }}</td>
+        <td>{{ product.price | currency }}</td>
+        <td>
+          <img *ngIf="product.imageUrl" [src]="product.imageUrl" alt="{{ product.name }}" width="50" />
+        </td>
+        <td>{{ product.description }}</td>
+        <td>
+          <button class="btn btn-sm btn-primary me-1" (click)="startEdit(product)">Edit</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteProduct(product.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
